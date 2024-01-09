@@ -31,12 +31,16 @@
 #Hint 3: Download and read this flow chart I've created:
 #   https://drive.google.com/uc?export=download&id=1rDkiHCrhaf9eX7u7yjM1qwSuyEk-rPnt
 
+import os
 from art import logo
 import random
 
 cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 user_cards = []
 computer_cards = []
+
+def cls():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def deal_card():
     choice = random.choice(cards)
@@ -56,9 +60,19 @@ def calculate_score(cards):
             score = sum(cards)
         return score
 
-def max_score(user_score, computer_score):
+def compare(user_score, computer_score):
     if user_score == computer_score:
-        print("Push!")
+        print("Draw!")
+    elif computer_score == 0:
+        print("¡Black Jack!")
+        print("Computer Wins!")
+    elif user_score == 0:
+        print("¡Black Jack!")
+        print("User Wins!")
+    elif computer_score > 21:
+        print("User Wins!")
+    elif user_score > 21:
+        print("Computer Wins!")
     else:
         max_score = max(user_score, computer_score)
         if user_score == max_score:
@@ -67,36 +81,33 @@ def max_score(user_score, computer_score):
             print("Game Over\n")
     return True
 
-end = False
-while not end:
-    if not (user_cards and computer_cards):
-        print(logo)
-        for _ in range(0,2):
-            user_cards.append(deal_card())
-            computer_cards.append(deal_card())
+def play_blackjack():
+    end = False
+    while not end:
+        if not (user_cards and computer_cards):
+            print(logo)
+            for _ in range(0,2):
+                user_cards.append(deal_card())
+                computer_cards.append(deal_card())
 
-    user_score = calculate_score(user_cards)
-    computer_score = calculate_score(computer_cards)
-    print(f"Your Cards: {user_cards}, current score: {user_score}\n")
-    print(f"computer's first card: {computer_cards[0]}\n")
+        user_score = calculate_score(user_cards)
+        computer_score = calculate_score(computer_cards)
+        print(f"Your Cards: {user_cards}, current score: {user_score}\n")
+        print(f"computer's first card: {computer_cards[0]}\n")
 
-    if (user_score or computer_score) == 0:
-        print("¡Black Jack!")
-        end = max_score(user_score, computer_score)
-    elif (user_score or computer_score) > 21:
-        end = max_score(user_score, computer_score)
-    else:
         another = input("Type 'y' to get another card, type 'n' to pass: \n")
         if another == "y":
             user_cards.append(deal_card())
             continue
         else:
+            while computer_score < 17:
+                computer_cards.append(deal_card())
+            print(f"Computer's Cards: {computer_cards}, current score: {computer_score}\n")
+            compare(user_score, computer_score)
+
+        restart = input("Type 'y' if you want to restart, type 'n' to pass: \n")
+        if restart == "y":
+            cls()
+            play_blackjack()
+        else:
             end = True
-
-#Hint 11: The score will need to be rechecked with every new card drawn and the checks in Hint 9 need to be repeated until the game ends.
-
-#Hint 12: Once the user is done, it's time to let the computer play. The computer should keep drawing cards as long as it has a score less than 17.
-
-#Hint 13: Create a function called compare() and pass in the user_score and computer_score. If the computer and user both have the same score, then it's a draw. If the computer has a blackjack (0), then the user loses. If the user has a blackjack (0), then the user wins. If the user_score is over 21, then the user loses. If the computer_score is over 21, then the computer loses. If none of the above, then the player with the highest score wins.
-
-#Hint 14: Ask the user if they want to restart the game. If they answer yes, clear the console and start a new game of blackjack and show the logo from art.py.
