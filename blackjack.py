@@ -35,9 +35,6 @@ import os
 from art import logo
 import random
 
-user_cards = []
-computer_cards = []
-
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -64,61 +61,55 @@ def calculate_score(cards):
 
 def compare(user_score, computer_score):
     if user_score == computer_score:
-        print("Draw!")
+        return "¡Draw!"
     elif computer_score == 0:
-        print("¡Black Jack!")
-        print("Computer Wins!")
+        return "¡Lose, opponent has Blackjack!"
     elif user_score == 0:
-        print("¡Black Jack!")
-        print("User Wins!")
+        return "¡Win with a Blackjack!"
     elif computer_score > 21:
-        print("User Wins!")
+        return "¡Opponent went over. You win!"
     elif user_score > 21:
-        print("Computer Wins!")
+        return "¡You went over. You lose!"
+    elif user_score > computer_score:
+        return "¡You win!"
     else:
-        max_score = max(user_score, computer_score)
-        if user_score == max_score:
-            print("¡You Win!\n")
-        else:
-            print("Game Over\n")
-    return True
+        return "¡You lose!"
 
 def play_blackjack():
-    is_game_over = False
-    while not is_game_over:
-        if not (user_cards and computer_cards):
-            print(logo)
-            for _ in range(2):
-                user_cards.append(deal_card())
-                computer_cards.append(deal_card())
+    print(logo)
 
+    user_cards = []
+    computer_cards = []
+    is_game_over = False
+
+    for _ in range(2):
+        user_cards.append(deal_card())
+        computer_cards.append(deal_card())
+
+    while not is_game_over:
         user_score = calculate_score(user_cards)
         computer_score = calculate_score(computer_cards)
+
         print(f"Your Cards: {user_cards}, current score: {user_score}\n")
         print(f"computer's first card: {computer_cards[0]}\n")
 
-        #TODO: check if game is over before asking to get another card...
         if user_score == 0 or computer_score == 0 or user_score > 21:
             is_game_over = True
-            continue
-        another = input("Type 'y' to get another card, type 'n' to pass: \n")
-        if another == "y":
-            user_cards.append(deal_card())
-            # probably here
-            continue
         else:
-            while computer_score < 17:
-                computer_cards.append(deal_card())
-                computer_score = calculate_score(computer_cards)
-            print(f"Computer's Cards: {computer_cards}, current score: {computer_score}\n")
-            compare(user_score, computer_score)
+            another_card = input("Type 'y' to get another card, type 'n' to pass: \n")
+            if another_card == "y":
+                user_cards.append(deal_card())
+            else:
+                is_game_over = True
 
-        restart = input("Type 'y' if you want to restart, type 'n' to pass: \n")
-        if restart == "y":
-            cls()
-            play_blackjack()
-        else:
-            is_game_over = True
+    while computer_score != 0 and computer_score < 17:
+        computer_cards.append(deal_card())
+        computer_score = calculate_score(computer_cards)
 
+    print(f" Your final hand: {user_cards}, final score: {user_score}\n")
+    print(f" Computer's final hand: {computer_cards}, final score: {computer_score}\n")
+    print(compare(user_score, computer_score))
 
-play_blackjack()
+while input("Do you want to play a game of blackjack? Type 'y' or 'n': \n") == "y":
+    cls()
+    play_blackjack()
