@@ -84,8 +84,8 @@ def compare(user_score, computer_score):
     return True
 
 def play_blackjack():
-    end = False
-    while not end:
+    is_game_over = False
+    while not is_game_over:
         if not (user_cards and computer_cards):
             print(logo)
             for _ in range(2):
@@ -98,6 +98,9 @@ def play_blackjack():
         print(f"computer's first card: {computer_cards[0]}\n")
 
         #TODO: check if game is over before asking to get another card...
+        if user_score == 0 or computer_score == 0 or user_score > 21:
+            is_game_over = True
+            continue
         another = input("Type 'y' to get another card, type 'n' to pass: \n")
         if another == "y":
             user_cards.append(deal_card())
@@ -115,7 +118,7 @@ def play_blackjack():
             cls()
             play_blackjack()
         else:
-            end = True
+            is_game_over = True
 
 
 play_blackjack()
